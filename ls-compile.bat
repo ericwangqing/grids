@@ -1,0 +1,1 @@
+lsc -cbo Resources livescripts
