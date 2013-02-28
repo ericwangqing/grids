@@ -5,7 +5,7 @@ grids-data = [{avatar: (get-avatar-url i), name: i} for i in [1 to 24]]
 win = Ti.UI.create-window(
   background-color: 'black'
   nav-bar-hidden: false
-  title: '9 grids'
+  title: 'YoYo通讯录'
 ) 
 
 win.add grid.create-scroll-grid-view {data: grids-data}

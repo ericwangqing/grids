@@ -4,3 +4,4 @@ tmp
 ._*
 .DS_Store
 *.js
+*.lock
