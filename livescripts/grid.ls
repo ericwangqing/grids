@@ -1,6 +1,6 @@
 require! ['util', 'mask']
 
-MOVING_THRESHOLD = 1
+MOVING_THRESHOLD = 10
 
 DEFAULT_DIMENSION_CONFIG =
   cell-width: util.dToP 118
@@ -18,7 +18,7 @@ create-scroll-grid-view = (params) ->
     data: config.data
     # z-index: 0
     is-call-mask-shown: false # 用于指示mask是否出现。
-    duration-to-show-call-mask: 200
+    duration-to-show-call-mask: 300
     avatar-tapped-handler: ->
       console.log 'tapped'
   }
@@ -53,6 +53,8 @@ add-grid-cells-factory = ->
         image: cell-data.avatar
         name: cell-data.name # TODO：将要移除
         # z-index: 0
+        origin-x: null # 记录初始位置用于判断touchmove的范围
+        origin-y: null 
         yoyo-type: 'contact-avatar-cell'
         data: cell-data # 将phone-number、missing-calls等数据传到cell-view中使用
       }
@@ -82,29 +84,32 @@ add-push-cell-listeners = !(view) ->
 add-long-hold-listeners = !(view) ->
   view.add-event-listener 'touchstart', (e) ->
     if is-yoyo-contact-cell e.source
+      e.source.origin-x = e.x
+      e.source.origin-y = e.y
       Ti.API.info "--> #{e.source.name} was touchstart"
       e.source.show-mask-timer = set-timeout (->
-          view.is-call-mask-shown = true
-          show-mask view
+          if !e.source.is-out-of-the-cell # 避免滚动整个view时，出现mask
+            view.is-call-mask-shown = true
+            show-mask view 
           ), view.duration-to-show-call-mask + 1
  
   view.add-event-listener 'touchend', (e) ->
     if is-yoyo-contact-cell e.source
+      e.source.origin-x = e.source.origin-y = null
+      e.source.is-out-of-the-cell = false
       Ti.API.info "--> #{e.source.name} was touchend at z-index: #{e.source.zIndex}"
       clear-timeout e.source.show-mask-timer if e.source.show-mask-timer
 
-  view.add-event-listener 'touchmove', (->
-    origin-x = null
-    origin-y = null
-    (e) ->
-      console.log "view touchmove origin-x: #{origin-x}, origin-y: #{origin-y}; x: #{e.x}, y: #{e.y}"
-      return if !view.is-call-mask-shown
+  view.add-event-listener 'touchmove', (e) ->
+    if (is-yoyo-contact-cell e.source) 
+      console.log "view touchmove origin-x: #{e.source.origin-x}, origin-y: #{e.source.origin-y}; x: #{e.x}, y: #{e.y}"
       console.log "show touchmove on mask"
-      origin-x := e.x if not origin-x
-      origin-y := e.y if not origin-y
-      if (e.x - origin-x) > MOVING_THRESHOLD or (e.y - origin-y) > MOVING_THRESHOLD
-        mask.mask-calling view.mask
-    )()
+      if is-start-cell e.source
+        if (e.x - e.source.origin-x) > MOVING_THRESHOLD or (e.y - e.source.origin-y) > MOVING_THRESHOLD
+          return if !view.is-call-mask-shown
+          mask.mask-calling view.mask
+      else
+        e.source.is-out-of-the-cell = true
 
 add-mask = (view) ->
   mask.create-mask view
@@ -115,5 +120,8 @@ show-mask = (view)->
 
 is-yoyo-contact-cell = (ui-element) ->
   ui-element.yoyo-type is 'contact-avatar-cell'
+
+is-start-cell = (cell) ->
+  !!cell.origin-x
 
 exports.create-scroll-grid-view = create-scroll-grid-view

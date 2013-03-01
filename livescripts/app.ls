@@ -1,6 +1,6 @@
 require! ['grid', 'util']
 
-grids-data = [{avatar: (get-avatar-url i), name: i} for i in [1 to 24]]
+grids-data = [{avatar: (get-avatar-url i), name: i} for i in [1 to 6]]
 
 win = Ti.UI.create-window(
   background-color: 'black'
@@ -14,5 +14,5 @@ win.open!
 
 function get-avatar-url index
   '/images/' + ((index - 1) % 12 + 1) + '.png'
-  # '/images/0.png' # DEBUG
+  '/images/0.png' # DEBUG
 
