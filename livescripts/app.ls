@@ -14,4 +14,5 @@ win.open!
 
 function get-avatar-url index
   '/images/' + ((index - 1) % 12 + 1) + '.png'
+  # '/images/0.png' # DEBUG
 
