@@ -1,6 +1,6 @@
 require! ['util', 'mask']
 
-MOVING_THRESHOLD = 10
+MOVING_THRESHOLD = 5
 
 DEFAULT_DIMENSION_CONFIG =
   cell-width: util.dToP 118
@@ -15,12 +15,11 @@ create-scroll-grid-view = (params) ->
     scroll-type: 'vertical'
     content-height: 'auto'
     content-width: 'auto'
-    data: config.data
-    # z-index: 0
     is-call-mask-shown: false # 用于指示mask是否出现。
     duration-to-show-call-mask: 300
     avatar-tapped-handler: ->
       console.log 'tapped'
+    data: config.data
   }
 
   add-grid-rows scroll-view, config
@@ -55,15 +54,20 @@ add-grid-cells-factory = ->
         # z-index: 0
         origin-x: null # 记录初始位置用于判断touchmove的范围
         origin-y: null 
+        pressed: null # 记录是否被按下
+
         yoyo-type: 'contact-avatar-cell'
         data: cell-data # 将phone-number、missing-calls等数据传到cell-view中使用
       }
+
       row-view.add cell-view
       data-index++
 
 add-listeners = !(view) ->
   add-push-cell-listeners view
-  add-long-hold-listeners view
+  add-long-press-listeners view
+  add-mask-slide-listeners view # 当用户long press出现mask，开始滑动时，这个滑动出现在view，而不是mask。只有松开，再次滑动，才是在mask上。
+
 
 add-push-cell-listeners = !(view) ->
   matrix2d = Ti.UI.create2DMatrix!
@@ -74,54 +78,59 @@ add-push-cell-listeners = !(view) ->
       autoreverse : true
       }
 
-  view.add-event-listener 'singletap', (e) ->
-    if is-yoyo-contact-cell e.source
-      Ti.API.info "--> #{e.source.name} was singletapped"
-      e.source.animate push-cell-animation,->
-        view.avatar-tapped-handler 
+  add-listener-to-cell-event view, 'singletap', !(e, cell) ->
+    Ti.API.info "--> #{cell.name} was singletapped"
+    cell.animate push-cell-animation, !->
+      view.avatar-tapped-handler! 
 
 
-add-long-hold-listeners = !(view) ->
-  view.add-event-listener 'touchstart', (e) ->
-    if is-yoyo-contact-cell e.source
-      e.source.origin-x = e.x
-      e.source.origin-y = e.y
-      Ti.API.info "--> #{e.source.name} was touchstart"
-      e.source.show-mask-timer = set-timeout (->
-          if !e.source.is-out-of-the-cell # 避免滚动整个view时，出现mask
-            view.is-call-mask-shown = true
-            show-mask view 
-          ), view.duration-to-show-call-mask + 1
- 
-  view.add-event-listener 'touchend', (e) ->
-    if is-yoyo-contact-cell e.source
-      e.source.origin-x = e.source.origin-y = null
-      e.source.is-out-of-the-cell = false
-      Ti.API.info "--> #{e.source.name} was touchend at z-index: #{e.source.zIndex}"
-      clear-timeout e.source.show-mask-timer if e.source.show-mask-timer
+add-long-press-listeners = !(view) ->
+  add-listener-to-cell-event view, 'touchstart', !(e, cell) ->
+    Ti.API.info "--> #{cell.name} was touchstart in longpress handler"
+    view.pressed = true # 在整个nine grids上监听long press，而不是cell，避免滑动超出时cell时的误判。
+    cell.show-mask-timer = set-timeout (->
+      if view.pressed
+        view.is-call-mask-shown = true
+        show-mask view 
+      ), view.duration-to-show-call-mask + 1
 
-  view.add-event-listener 'touchmove', (e) ->
-    if (is-yoyo-contact-cell e.source) 
-      console.log "view touchmove origin-x: #{e.source.origin-x}, origin-y: #{e.source.origin-y}; x: #{e.x}, y: #{e.y}"
-      console.log "show touchmove on mask"
-      if is-start-cell e.source
-        if (e.x - e.source.origin-x) > MOVING_THRESHOLD or (e.y - e.source.origin-y) > MOVING_THRESHOLD
-          return if !view.is-call-mask-shown
-          mask.mask-calling view.mask
-      else
-        e.source.is-out-of-the-cell = true
+  add-same-listener-to-multiple-cell-events view, ['singletap', 'touchmove', 'touchend'], !(e, cell) ->
+    view.pressed = false
+    # view.pressed = true if e.type is 'touchmove' and !is-significant-move e, cell
 
-add-mask = (view) ->
+add-mask-slide-listeners = !(view) ->
+  add-listener-to-cell-event view, 'touchstart', !(e, cell) ->
+    Ti.API.info "--> #{cell.name} was touchstart in maskslide handler"
+    cell.origin-x = e.x
+    cell.origin-y = e.y
+
+  add-listener-to-cell-event view, 'touchmove', !(e, cell) ->
+    console.log "cell touchmove x: #{e.x - cell.origin-x}, y: #{e.y - cell.origin-y}"
+    mask.mask-calling view.mask if view.is-call-mask-shown and is-significant-move e, cell
+
+is-significant-move = (e, cell) ->
+  Math.abs(e.x - cell.origin-x) > MOVING_THRESHOLD or Math.abs(e.y - cell.origin-y) > MOVING_THRESHOLD
+    
+
+
+add-same-listener-to-multiple-cell-events = !(element, events, listener) ->
+  for event in events
+    add-listener-to-cell-event element, event, listener
+    # element.add-event-listener event, listener
+
+add-listener-to-cell-event = !(listened-element, event, handler) ->
+  listened-element.add-event-listener event, !(e) ->
+    handler e, e.source if is-yoyo-contact-cell e.source
+      
+
+add-mask = !(view) ->
   mask.create-mask view
 
-show-mask = (view)->
+show-mask = !(view)->
   view.mask.show!
 
 
 is-yoyo-contact-cell = (ui-element) ->
   ui-element.yoyo-type is 'contact-avatar-cell'
-
-is-start-cell = (cell) ->
-  !!cell.origin-x
 
 exports.create-scroll-grid-view = create-scroll-grid-view
