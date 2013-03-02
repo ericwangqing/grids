@@ -15,7 +15,7 @@ create-scroll-grid-view = (params) ->
     scroll-type: 'vertical'
     content-height: 'auto'
     content-width: 'auto'
-    animation: create-push-animation config.cell-animation-duration, config.cell-scale-when-touch
+    animation: util.create-push-animation config.cell-animation-duration, config.cell-scale-when-touch
     data: config.data
   }
 
@@ -76,9 +76,10 @@ add-second-mask-listeners = !(view) ->
 animate-cell-then-show-mask = !(cell, animation, mask) ->
   cell.animate animation, !->
     if mask.yoyo-name is 'Calling Mask'
-      mask.show cell.rect.x, cell.parent.rect.y 
+      mask.show cell, cell.rect.x, cell.parent.rect.y 
     else
-      mask.show!
+      mask.background-color = '#E2E1E1'
+      mask.show cell
 
 
 add-same-listener-to-multiple-cell-events = !(element, events, listener) ->
@@ -89,15 +90,6 @@ add-listener-to-cell-event = !(listened-element, event, handler) ->
   listened-element.add-event-listener event, !(e) ->
     handler e, e.source if is-yoyo-contact-cell e.source
       
-create-push-animation = (duration, scale) ->
-  matrix2d = Ti.UI.create2DMatrix!
-  matrix2d = matrix2d.scale scale
-  Ti.UI.create-animation {
-      transform: matrix2d
-      duration: duration
-      autoreverse : true
-      }
-
 add-masks = !(view) ->
   view.main-mask = mask.create-mask 'Calling Mask'
   view.second-mask = mask.create-mask 'Info Mask'
