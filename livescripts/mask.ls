@@ -16,12 +16,12 @@ exports.create-mask = (mask-name) ->
 
   label = Ti.UI.create-label {
     background-color: 'white'
-    font: {font-size: 24}
+    font: {font-size: 60}
     text: mask-name
     text-align: Ti.UI.TEXT_ALIGNMENT_CENTER
     width: 'auto'
     height: 'auto'
-    top: 50
+    top: 300
   }
 
   mask.yoyo-label = label
@@ -30,7 +30,7 @@ exports.create-mask = (mask-name) ->
   mask.add-event-listener 'singletap', (e) ->
     console.log "mask singletapped"
     if mask.visible
-      mask.yoyo-label.set-text ''
+      mask.yoyo-label.set-text mask.yoyo-name
       mask.set-background-color 'blue'
       mask.hide!
     else
@@ -50,14 +50,13 @@ exports.create-mask = (mask-name) ->
       mask.set-background-color 'blue'
       ), MASK-SHOW-DURATION,
 
-
   mask
 
 
 is-significant-move = (e, cell) ->
   Math.abs(e.x - cell.origin-x) > MOVING_THRESHOLD or Math.abs(e.y - cell.origin-y) > MOVING_THRESHOLD
     
-
+exports.is-significant-move = is-significant-move
 
 mask-calling = (mask) ->
   clear-timeout mask.auto-hide-timer if mask.auto-hide-timer

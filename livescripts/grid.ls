@@ -13,7 +13,7 @@ create-scroll-grid-view = (params) ->
     scroll-type: 'vertical'
     content-height: 'auto'
     content-width: 'auto'
-    is-call-mask-shown: false # 用于指示mask是否出现。
+    # is-call-mask-shown: false # 用于指示mask是否出现。
     duration-to-show-mask: 200
     # avatar-longpress-handler: (cell)->
     #   console.log '#{cell.name} was longpressed ...'
@@ -50,9 +50,7 @@ add-grid-cells-factory = ->
         image: cell-data.avatar
         name: cell-data.name # TODO：将要移除
         # z-index: 0
-        origin-x: null # 记录初始位置用于判断touchmove的范围
-        origin-y: null 
-        pressed: null # 记录是否被按下
+        is-moved: false # 记录是否被按下
 
         yoyo-type: 'contact-avatar-cell'
         data: cell-data # 将phone-number、missing-calls等数据传到cell-view中使用
@@ -67,10 +65,21 @@ add-listeners = !(view) ->
 
 
 add-push-cell-listeners = !(view) ->
-  add-listener-to-cell-event view, 'singletap', !(e, cell) ->
+  add-same-listener-to-multiple-cell-events view, ['touchstart'], !(e, cell) ->
     Ti.API.info "--> #{cell.name} was singletapped"
-    view.is-call-mask-shown = true
-    view.calling-mask.show-then-hide! 
+    cell.origin-x = e.x
+    cell.origin-y = e.y
+    set-timeout (->
+      if !cell.is-moved and !view.calling-mask.visible
+        view.calling-mask.show-then-hide!
+      else
+        cell.is-moved = false
+      ), 50
+
+  add-same-listener-to-multiple-cell-events view, ['touchmove', 'doubletap', 'longpress'], !(e, cell) ->
+    cell.is-moved = true if mask.is-significant-move e, cell
+    cell.is-moved = false if e.type is 'touchmove' and !mask.is-significant-move e, cell # tap时会有轻微移位
+
 
 create-push-animation = (view) ->
   matrix2d = Ti.UI.create2DMatrix!
@@ -82,31 +91,15 @@ create-push-animation = (view) ->
       }
 
 add-long-press-listeners = !(view) ->
-  # add-listener-to-cell-event view, 'touchstart', !(e, cell) ->
-  #   Ti.API.info "--> #{cell.name} was touchstart in longpress handler"
-  #   view.pressed = true # 在整个nine grids上监听long press，而不是cell，避免滑动超出时cell时的误判。
-  #   cell.show-mask-timer = set-timeout (->
-  #     if view.pressed
-  #       view.is-call-mask-shown = true
-  #       show-mask view 
-  #     ), view.duration-to-show-mask + 1
-
-  # add-same-listener-to-multiple-cell-events view, ['singletap', 'touchmove', 'touchend'], !(e, cell) ->
-  #   view.pressed = false
-  #   # view.pressed = true if e.type is 'touchmove' and !is-significant-move e, cell
-
-  add-listener-to-cell-event view, 'longpress', !(e, cell) ->
+  add-same-listener-to-multiple-cell-events view, ['doubletap', 'longpress'], !(e, cell) ->
     Ti.API.info "--> #{cell.name} was touchstart in longpress handler"
-    # view.avatar-longpress-handler cell 
     cell.animate (create-push-animation view), !->
-      view.is-call-mask-shown = true
-      view.info-mask.show-then-hide! 
+      view.info-mask.show! 
 
 
 add-same-listener-to-multiple-cell-events = !(element, events, listener) ->
   for event in events
     add-listener-to-cell-event element, event, listener
-    # element.add-event-listener event, listener
 
 add-listener-to-cell-event = !(listened-element, event, handler) ->
   listened-element.add-event-listener event, !(e) ->
