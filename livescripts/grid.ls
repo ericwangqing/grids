@@ -6,6 +6,8 @@ DEFAULT_DIMENSION_CONFIG =
   x-spacer: util.dToP 7.5
   y-spacer: util.dToP 7.5
   cells-in-a-row: 3
+  cell-scale-when-touch: 1.4
+  cell-animation-duration: 100
 
 create-scroll-grid-view = (params) ->
   config = {} <<< DEFAULT_DIMENSION_CONFIG <<< params
@@ -13,10 +15,7 @@ create-scroll-grid-view = (params) ->
     scroll-type: 'vertical'
     content-height: 'auto'
     content-width: 'auto'
-    # is-call-mask-shown: false # 用于指示mask是否出现。
-    duration-to-show-mask: 200
-    # avatar-longpress-handler: (cell)->
-    #   console.log '#{cell.name} was longpressed ...'
+    animation: create-push-animation config.cell-animation-duration, config.cell-scale-when-touch
     data: config.data
   }
 
@@ -60,42 +59,22 @@ add-grid-cells-factory = ->
       data-index++
 
 add-listeners = !(view) ->
-  add-push-cell-listeners view
-  add-long-press-listeners view
+  add-main-mask-listeners view
+  add-second-mask-listeners view
 
 
-add-push-cell-listeners = !(view) ->
-  add-same-listener-to-multiple-cell-events view, ['touchstart'], !(e, cell) ->
-    Ti.API.info "--> #{cell.name} was singletapped"
-    cell.origin-x = e.x
-    cell.origin-y = e.y
-    set-timeout (->
-      if !cell.is-moved and !view.calling-mask.visible
-        view.calling-mask.show-then-hide!
-      else
-        cell.is-moved = false
-      ), 50
+add-main-mask-listeners = !(view) ->
+  add-same-listener-to-multiple-cell-events view, ['singletap'], !(e, cell) ->
+    animate-cell-then-show-mask cell, view.animation, view.main-mask
 
-  add-same-listener-to-multiple-cell-events view, ['touchmove', 'doubletap', 'longpress'], !(e, cell) ->
-    cell.is-moved = true if mask.is-significant-move e, cell
-    cell.is-moved = false if e.type is 'touchmove' and !mask.is-significant-move e, cell # tap时会有轻微移位
+add-second-mask-listeners = !(view) ->
+  add-same-listener-to-multiple-cell-events view, ['doubletap'], !(e, cell) ->
+    animate-cell-then-show-mask cell, view.animation, view.second-mask
+     
 
-
-create-push-animation = (view) ->
-  matrix2d = Ti.UI.create2DMatrix!
-  matrix2d = matrix2d.scale 0.8
-  Ti.UI.create-animation {
-      transform: matrix2d
-      duration: view.duration-to-show-mask
-      autoreverse : true
-      }
-
-add-long-press-listeners = !(view) ->
-  add-same-listener-to-multiple-cell-events view, ['doubletap', 'longpress'], !(e, cell) ->
-    Ti.API.info "--> #{cell.name} was touchstart in longpress handler"
-    cell.animate (create-push-animation view), !->
-      view.info-mask.show! 
-
+animate-cell-then-show-mask = !(cell, animation, mask) ->
+  cell.animate animation, !->
+      mask.show!
 
 add-same-listener-to-multiple-cell-events = !(element, events, listener) ->
   for event in events
@@ -105,12 +84,20 @@ add-listener-to-cell-event = !(listened-element, event, handler) ->
   listened-element.add-event-listener event, !(e) ->
     handler e, e.source if is-yoyo-contact-cell e.source
       
+create-push-animation = (duration, scale) ->
+  matrix2d = Ti.UI.create2DMatrix!
+  matrix2d = matrix2d.scale scale
+  Ti.UI.create-animation {
+      transform: matrix2d
+      duration: duration
+      autoreverse : true
+      }
 
-add-masks = (view) ->
-  view.calling-mask = mask.create-mask 'Calling Mask'
-  view.info-mask = mask.create-mask 'Info Mask'
-  view.add view.calling-mask
-  view.add view.info-mask
+add-masks = !(view) ->
+  view.main-mask = mask.create-mask 'Calling Mask'
+  view.second-mask = mask.create-mask 'Info Mask'
+  view.add view.main-mask
+  view.add view.second-mask
 
 is-yoyo-contact-cell = (ui-element) ->
   ui-element.yoyo-type is 'contact-avatar-cell'
