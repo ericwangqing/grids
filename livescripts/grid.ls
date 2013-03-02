@@ -35,6 +35,7 @@ add-grid-rows = !(view, config) ->
       height: config.cell-height + config.y-spacer
     }
     add-grid-cells row-view, config
+    row-view.parent = view
     view.add row-view
 
 add-grid-cells-factory = ->
@@ -54,7 +55,7 @@ add-grid-cells-factory = ->
         yoyo-type: 'contact-avatar-cell'
         data: cell-data # 将phone-number、missing-calls等数据传到cell-view中使用
       }
-
+      cell-view.parent = row-view
       row-view.add cell-view
       data-index++
 
@@ -74,7 +75,7 @@ add-second-mask-listeners = !(view) ->
 
 animate-cell-then-show-mask = !(cell, animation, mask) ->
   cell.animate animation, !->
-      mask.show!
+      mask.show cell.rect.x, cell.parent.rect.y # for table row
 
 add-same-listener-to-multiple-cell-events = !(element, events, listener) ->
   for event in events
@@ -102,4 +103,4 @@ add-masks = !(view) ->
 is-yoyo-contact-cell = (ui-element) ->
   ui-element.yoyo-type is 'contact-avatar-cell'
 
-exports.create-scroll-grid-view = create-scroll-grid-view
+module.exports <<< {create-scroll-grid-view}
