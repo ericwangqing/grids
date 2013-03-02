@@ -6,8 +6,8 @@ DEFAULT_DIMENSION_CONFIG =
   x-spacer: util.dToP 7.5
   y-spacer: util.dToP 7.5
   cells-in-a-row: 3
-  cell-scale-when-touch: 1.4
-  cell-animation-duration: 100
+  cell-scale-when-touch: 1.5
+  cell-animation-duration: 60
 
 create-scroll-grid-view = (params) ->
   config = {} <<< DEFAULT_DIMENSION_CONFIG <<< params
@@ -75,7 +75,11 @@ add-second-mask-listeners = !(view) ->
 
 animate-cell-then-show-mask = !(cell, animation, mask) ->
   cell.animate animation, !->
-      mask.show cell.rect.x, cell.parent.rect.y # for table row
+    if mask.yoyo-name is 'Calling Mask'
+      mask.show cell.rect.x, cell.parent.rect.y 
+    else
+      mask.show!
+
 
 add-same-listener-to-multiple-cell-events = !(element, events, listener) ->
   for event in events
