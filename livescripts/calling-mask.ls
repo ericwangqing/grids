@@ -22,10 +22,11 @@ add-buttons = !(mask) ->
   for button-name in BUTTON_NAMES
     mask[button-name] = button = Ti.UI.create-view {
       yoyo-name: button-name
-      background-color: '#E2E1E1'
+      background-color: 'black'
       opacity: 0.98
       width: util.dToP 118
       height: util.dToP 118
+      border-radius: util.dToP 5
     }
     icon = Ti.UI.create-image-view {
       image: select-phone-or-message-icon button-name 
@@ -70,9 +71,9 @@ hide-label = !(mask) ->
 convert-show-method-of-mask-to-show-buttons-in-different-places = !(mask) ->
   old-show = mask.show
   mask.show = (cell, cell-left, cell-top) ->
-    console.log "cell-left: #{cell-left}, cell-top: #{cell-top}"
+    # console.log "cell-left: #{cell-left}, cell-top: #{cell-top}"
     cell-width = 251
-    icon-justic-offset = 0
+    icon-justic-offset = 2
     left = cell-left + icon-justic-offset
     top = cell-top + icon-justic-offset
     set-position mask[BUTTON_NAMES[0]], top, left - cell-width

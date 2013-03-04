@@ -1,24 +1,23 @@
 MASK-SHOW-DURATION = 1500
 
-MASK-BACKGROUND-COLOR = '#E2E1E1'
+MASK-BACKGROUND-COLOR = 'black'
 
 require! ['calling-mask', 'util']
 
-create-mask = (mask-name) ->
+create-mask = (params) ->
   mask = Ti.UI.create-view {
-    # opacity: 0
+    # opacity: 0.9
     # background-color: MASK-BACKGROUND-COLOR
     width: Ti.UI.FILL
     height: Ti.UI.FILL
     visible: false
-    yoyo-name: mask-name
     # z-index: 1
-  }
+  } <<< params
 
   #  注意这里方法的顺序不能够改。
   add-text-label mask
   convert-mask-show mask
-  customize-for-diffrent-mask mask, mask-name
+  customize-for-diffrent-mask mask
   add-single-tap-close-mask-handler mask
   mask
 
@@ -50,11 +49,12 @@ add-single-tap-close-mask-handler = !(mask) ->
         mask.yoyo-label.set-text mask-origin-text
         mask.set-background-color mask-origin-background-color if mask-origin-background-color
         mask.hide!
+        mask.parent.hide-vells-of-cells!
     else
       console.log "mask clicked even hidden"
 
-customize-for-diffrent-mask = (mask, mask-name) ->
-  switch mask-name 
+customize-for-diffrent-mask = (mask) ->
+  switch mask.yoyo-name 
   case 'Calling Mask'
     calling-mask.create mask
   case 'Info Mask'
