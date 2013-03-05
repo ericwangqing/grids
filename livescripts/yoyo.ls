@@ -1,15 +1,15 @@
 require! ['grid', 'mask', 'data-loader', 'config', 'util']
 create-yoyo-window = ->
-  contacts = data-loader.load-contacts!
+  # contacts = data-loader.load-contacts!
   win = create-main-window!
-  win.add create-yoyo-grid contacts
+  win.add create-yoyo-grid!
   win
 
 create-main-window = ->
   win = Ti.UI.create-window config.main-window 
 
-create-yoyo-grid = (contacts) ->
-  yoyo-grid = grid.create-grid {data: contacts}
+create-yoyo-grid = ->
+  yoyo-grid = grid.create-grid data-loader
   add-masks yoyo-grid
   yoyo-grid
 
@@ -47,6 +47,7 @@ animate-cell-then-show-mask = !(tapped-cell, animation, mask) ->
     switch mask.yoyo-type 
     case 'Calling Mask'
       mask.show cell, cell.rect.x, cell.rect.y 
+      mask.parent.scrolling-enabled = false
     case 'Info Mask'
       mask.background-color = 'black'
       mask.show cell # 动画cell

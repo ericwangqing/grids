@@ -25,6 +25,7 @@ add-single-tap-close-mask-handler = !(mask) ->
   origin-background-color = mask.background-color
   origin-text = mask.yoyo-label.text
   mask.add-event-listener 'singletap', (e) ->
+    mask.parent.scrolling-enabled = true
     if mask.visible
       hide-mask mask, origin-text, origin-background-color
     else

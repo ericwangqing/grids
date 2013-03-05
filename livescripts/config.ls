@@ -1,7 +1,9 @@
 require! 'util'
 
 config =
-  DEBUG: true
+  # DEBUG: true
+  data-loader:
+    amount-of-a-load: 6
   main-window:
     yoyo-type: "main-window"
     background-color: 'black'
@@ -18,7 +20,7 @@ config =
     size: util.dToP 118
     radius: util.dToP 5
     scale-when-touch: 1.5
-    animation-duration: 60
+    animation-duration: 30
     x-spacer: util.dToP 7.5
     y-spacer: util.dToP 7.5 
   vell:
