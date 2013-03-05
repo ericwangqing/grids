@@ -40,6 +40,7 @@ add-same-listener-to-multiple-cell-events = !(element, events, listener) ->
     add-listener-to-cell-event element, event, listener
 
 animate-cell-then-show-mask = !(tapped-cell, animation, mask) ->
+  mask.parent.scrolling-enabled = false
   cell = tapped-cell.wrapper 
   util.bring-to-front cell # z-index不知为何在这里不起作用。
   util.bring-to-front mask
@@ -47,7 +48,6 @@ animate-cell-then-show-mask = !(tapped-cell, animation, mask) ->
     switch mask.yoyo-type 
     case 'Calling Mask'
       mask.show cell, cell.rect.x, cell.rect.y 
-      mask.parent.scrolling-enabled = false
     case 'Info Mask'
       mask.background-color = 'black'
       mask.show cell # 动画cell
