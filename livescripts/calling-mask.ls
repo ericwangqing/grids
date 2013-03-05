@@ -21,7 +21,7 @@ create = (mask) ->
 add-buttons = !(mask) ->
   for button-name in BUTTON_NAMES
     mask[button-name] = button = Ti.UI.create-view {
-      yoyo-name: button-name
+      yoyo-type: button-name
       background-color: 'black'
       opacity: 0.98
       width: util.dToP 118
@@ -62,8 +62,8 @@ is-significant-vertical-move = (e, mask) ->
 add-button-listeners = !(button, mask) ->
   button.add-event-listener 'singletap', (e) ->
     e.cancel-bubble = true
-    mask.make-call! if (button.yoyo-name.index-of 'call') > -1
-    mask.send-message! if (button.yoyo-name.index-of 'message') > -1
+    mask.make-call! if (button.yoyo-type.index-of 'call') > -1
+    mask.send-message! if (button.yoyo-type.index-of 'message') > -1
 
 hide-label = !(mask) ->
   mask.yoyo-label.text = ''
@@ -71,7 +71,6 @@ hide-label = !(mask) ->
 convert-show-method-of-mask-to-show-buttons-in-different-places = !(mask) ->
   old-show = mask.show
   mask.show = (cell, cell-left, cell-top) ->
-    # console.log "cell-left: #{cell-left}, cell-top: #{cell-top}"
     cell-width = 251
     icon-justic-offset = 2
     left = cell-left + icon-justic-offset

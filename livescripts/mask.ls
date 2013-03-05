@@ -8,6 +8,8 @@ create-mask = (params) ->
   mask = Ti.UI.create-view {
     # opacity: 0.9
     # background-color: MASK-BACKGROUND-COLOR
+    top: 0
+    left: 0
     width: Ti.UI.FILL
     height: Ti.UI.FILL
     visible: false
@@ -25,7 +27,7 @@ add-text-label = !(mask) ->
   label = Ti.UI.create-label {
     background-color: 'white'
     font: {font-size: 60}
-    text: mask.yoyo-name 
+    text: mask.yoyo-type 
     text-align: Ti.UI.TEXT_ALIGNMENT_CENTER
     width: 'auto'
     height: 'auto'
@@ -54,7 +56,7 @@ add-single-tap-close-mask-handler = !(mask) ->
       console.log "mask clicked even hidden"
 
 customize-for-diffrent-mask = (mask) ->
-  switch mask.yoyo-name 
+  switch mask.yoyo-type 
   case 'Calling Mask'
     calling-mask.create mask
   case 'Info Mask'

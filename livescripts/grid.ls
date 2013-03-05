@@ -4,45 +4,41 @@ temp-cells-store = null # 在grid未建造好之前，临时hold cells
 
 create-grid = (params) ->
   temp-cells-store := []
-  scroll-view = Ti.UI.create-scroll-view {
+  grid = Ti.UI.create-scroll-view {
     hide-vells-of-cells: !->
       for cell in @cells
         cell.vell.visible = false 
   }  <<< config.grid <<< params
 
-  add-grid-rows scroll-view
-  scroll-view.cells = [cell for cell in temp-cells-store]
-  scroll-view
+  add-grid-rows grid
+  grid.cells = [cell for cell in temp-cells-store]
+  grid
 
-add-grid-rows = !(view) ->
-  row-amount = view.data.length / config.grid.cells-in-a-row
+add-grid-rows = !(grid) ->
   add-grid-cells = add-grid-cells-factory!
-  row-amount = view.data.length / config.grid.cells-in-a-row
+  row-amount = grid.data.length / config.grid.cells-in-a-row
   for i in [1 to row-amount]
     top = (i - 1) * (config.cell.size + config.cell.y-spacer)
-    row-view = Ti.UI.create-view {
-      layout: 'horizontal'
-      focusable: false
-      top: (i - 1) * (config.cell.size + config.cell.y-spacer)
-      height: config.cell.size + config.cell.y-spacer
-    }
-    add-grid-cells row-view, view.data
-    view.add row-view
+    add-grid-cells grid, top, grid.data
 
 add-grid-cells-factory = ->
   data-index = 0
-  !(row-view, data) ->
+  !(grid, top, data) ->
     for i in [ 1 to config.grid.cells-in-a-row]
-      cell-data = data[data-index]
-      wrapped-cell-view = cell.create-cell {
-        image: cell-data.avatar
-        name: cell-data.name # TODO：将要移除
-        yoyo-type: 'contact-avatar-cell'
-        cell-index: data-index
-        data: cell-data # 将phone-number、missing-calls等数据传到cell-view中使用
-      }
-      row-view.add wrapped-cell-view
-      temp-cells-store.push wrapped-cell-view.cell
+      left = (i - 1) * (config.cell.size + config.cell.x-spacer)
+      wrapped-cell = create-wrapped-cell-with-data top, left, data, data-index
+      grid.add wrapped-cell # wrap cell for get rect.x at runtime, because the rect.x of a cell with borderRadius is always 0.
+      temp-cells-store.push wrapped-cell.cell
       data-index++
+
+create-wrapped-cell-with-data = (top, left, data, data-index) ->
+  cell-data = data[data-index]
+  cell.create-cell {
+    top: top
+    left: left
+    image: cell-data.avatar
+    cell-index: data-index
+    data: cell-data # 将phone-number、missing-calls等数据传到cell-view中使用
+  }
 
 module.exports <<< {create-grid}

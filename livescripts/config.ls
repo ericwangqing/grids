@@ -1,11 +1,14 @@
 require! 'util'
 
 config =
+  # DEBUG: true
   main-window:
+    yoyo-type: "main-window"
     background-color: 'black'
     nav-bar-hidden: false
     title: 'YoYo通讯录'
   cell:
+    yoyo-type: 'contact-avatar-cell'
     size: util.dToP 118
     radius: util.dToP 5
     scale-when-touch: 1.5
@@ -16,6 +19,7 @@ config =
       background-color: 'black'
       opacity: 0.9
   grid:
+    yoyo-type: 'contacts-grid'
     cells-in-a-row: 3
     scroll-type: 'vertical'
     content-height: 'auto'
