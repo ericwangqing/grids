@@ -29,7 +29,7 @@ get-cell-config = (params) ->
   } <<< params <<< {left: 0, top: 0}
 
 get-vell-config = (cell-config) ->
-  vell-config = config.cell.vell <<< cell-config{height, width} <<< {visible: false}
+  vell-config = config.vell <<< cell-config{height, width} <<< {visible: false}
 
 add-listeners = !(cell) ->
   cell.image-view.add-event-listener 'singletap', (e) ->

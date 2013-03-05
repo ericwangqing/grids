@@ -23,11 +23,11 @@ add-masks = !(grid) ->
 
 add-show-main-mask-listener = !(grid) ->
   add-listener-to-cell-event grid, 'singletap', !(e, cell) ->
-    animate-cell-then-show-mask cell, grid.animation, grid.main-mask
+    animate-cell-then-show-mask cell, config.animations.show-mask-animation, grid.main-mask
 
 add-show-second-mask-listener = !(grid) ->
   add-listener-to-cell-event grid, 'doubletap', !(e, cell) ->
-    animate-cell-then-show-mask cell, grid.animation, grid.second-mask
+    animate-cell-then-show-mask cell, config.animations.show-mask-animation, grid.second-mask
      
 add-listener-to-cell-event = !(listened-element, event, handler) ->
   listened-element.add-event-listener event, !(e) ->
