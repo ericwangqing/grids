@@ -1,4 +1,4 @@
-require! ['grid', 'mask', 'data-loader', 'config']
+require! ['grid', 'mask', 'data-loader', 'config', 'util']
 create-yoyo-window = ->
   contacts = data-loader.load-contacts!
   win = create-main-window!
@@ -33,7 +33,7 @@ add-listener-to-cell-event = !(listened-element, event, handler) ->
   listened-element.add-event-listener event, !(e) ->
     cell = e.source.parent # avatar在cell里面
     # console.log "cell got event: #{e.type}, cell is: #{e.source.parent}"
-    handler e, cell if is-yoyo-contact-cell cell
+    handler e, cell if is-yoyo-contact-cell cell 
       
 add-same-listener-to-multiple-cell-events = !(element, events, listener) ->
   for event in events
@@ -41,8 +41,10 @@ add-same-listener-to-multiple-cell-events = !(element, events, listener) ->
 
 animate-cell-then-show-mask = !(tapped-cell, animation, mask) ->
   cell = tapped-cell.wrapper 
+  util.bring-to-front cell # z-index不知为何在这里不起作用。
+  util.bring-to-front mask
   cell.animate animation, !-> 
-    switch mask.yoyo-type # 用yoyo-type代替yoyo-name，可以扩展出新的mask开场动画。
+    switch mask.yoyo-type 
     case 'Calling Mask'
       mask.show cell, cell.rect.x, cell.rect.y 
     case 'Info Mask'

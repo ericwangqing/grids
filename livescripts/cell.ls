@@ -25,11 +25,11 @@ get-cell-config = (params) ->
     yoyo-type: config.cell.yoyo-type
     height: config.cell.size
     width: config.cell.size
-    border-radius: config.cell.radius
+    border-radius: config.cell.radius 
   } <<< params <<< {left: 0, top: 0}
 
 get-vell-config = (cell-config) ->
-  vell-config = config.vell <<< cell-config{height, width} <<< {visible: false}
+  vell-config = config.vell <<< cell-config{height, width, border-radius} <<< {visible: false}
 
 add-listeners = !(cell) ->
   cell.image-view.add-event-listener 'singletap', (e) ->

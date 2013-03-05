@@ -1,7 +1,7 @@
 require! 'util'
 
 config =
-  # DEBUG: true
+  DEBUG: true
   main-window:
     yoyo-type: "main-window"
     background-color: 'black'
@@ -42,7 +42,7 @@ config =
 
   animations: {}
     
-config.animations.show-mask-animation = util.create-push-animation config.cell.animation-duration, config.cell.scale-when-touch, 10
-config.animations.hide-mask-animation = util.create-push-animation config.cell.animation-duration, 1, 1 # 恢复
+config.animations.show-mask-animation = util.create-push-animation config.cell.animation-duration, config.cell.scale-when-touch
+config.animations.hide-mask-animation = util.create-push-animation config.cell.animation-duration, 1 # 恢复
 
 module.exports <<< config
