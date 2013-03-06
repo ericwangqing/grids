@@ -4,6 +4,9 @@ config =
   # DEBUG: true
   data-loader:
     amount-of-a-load: 12
+    # minimal-rows-when-scolling: 24
+    interval-to-load: 10 # 用户无操作就load data
+    max-waiting-scroll-loader = 1
   main-window:
     yoyo-type: "main-window"
     background-color: 'black'
@@ -25,7 +28,7 @@ config =
     y-spacer: util.dToP 7.5 
   mask:
     background-color: 'black'
-    opacity: 0.9
+    opacity: 0.9 
     top: 0
     left: 0
     # width: Ti.UI.FILL

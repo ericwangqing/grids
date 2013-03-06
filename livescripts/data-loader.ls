@@ -9,7 +9,7 @@ data-loader = (->
 
     load-data: ->
       end = Math.min contacts.length, cursor + config.data-loader.amount-of-a-load
-      end = 3 * config.data-loader.amount-of-a-load if cursor is 0 # 第一次load多些，铺满屏幕
+      # end = 2 * config.data-loader.amount-of-a-load if cursor is 0 # 第一次load多些，铺满屏幕
       result = contacts[cursor to end - 1]
       cursor := end
       result
@@ -17,7 +17,7 @@ data-loader = (->
 
 
 function load-contacts
-  contacts-amount = if config.DEBUG then 6 else 200
+  contacts-amount = if config.DEBUG then 6 else 600
   contacts = [{avatar: (get-avatar-url i), name: i} for i in [1 to contacts-amount]]
 
 function get-avatar-url index
