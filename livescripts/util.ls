@@ -1,4 +1,4 @@
-dToP = (density-pixels) ->
+dip-to-pixel = (density-pixels) ->
   density-pixels * Ti.Platform.display-caps.dpi / 160 
 
 create-push-animation = (duration, scale) ->
@@ -10,4 +10,4 @@ create-push-animation = (duration, scale) ->
       autoreverse : false
       }
 
-module.exports = {dToP, create-push-animation} 
+module.exports = {dip-to-pixel, create-push-animation} 

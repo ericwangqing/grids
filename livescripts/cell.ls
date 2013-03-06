@@ -1,4 +1,4 @@
-require! ['config']
+require! ['config', 'info-bar']
 
 create-cell = (params) ->
   wrapper-config = get-wrapper-config params
@@ -8,6 +8,8 @@ create-cell = (params) ->
   cell = Ti.UI.create-view cell-config 
   cell.image-view = Ti.UI.create-image-view image-config
   cell.add cell.image-view
+  bar = info-bar.create-info-bar cell.data
+  cell.add bar
   warpper-cell-to-keep-rect-x-at-runtime cell, wrapper-config
 
 get-wrapper-config = (params) ->

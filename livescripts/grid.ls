@@ -1,6 +1,6 @@
 require! ['util', 'mask', 'cell', 'config']
 
-scroll-loader-counter = 0 
+# scroll-loader-counter = 0 
 create-grid-container = (data-loader) ->
   grid-container = Ti.UI.create-scroll-view config.grid
   grid = Ti.UI.create-view {
@@ -42,22 +42,15 @@ create-wrapped-cell-with-data = (top, left, data, data-index) ->
     left: left
     image: cell-data.avatar
     cell-index: data-index
-    data: cell-data # 将phone-number、missing-calls等数据传到cell-view中使用
+    data: cell-data # 将phone-number、missed-calls等数据传到cell-view中使用
   }
 
 add-grid-cells-loader = !(grid-container, grid, data-loader) ->
   # periodical-load-grid-cells grid, data-loader
   grid-container.add-event-listener 'scroll', (e) ->
-    if scroll-loader-counter < config.data-loader.max-waiting-scroll-loader
-      scroll-loader-counter++
-      load-grid-cells grid, data-loader 
-      # console.log "scoll load-grid-cells at last-row-index: #{grid.last-row-index}"
-      load-grid-cells grid, data-loader if last-row-index < config.data-loader.minimal-rows-when-scolling
-
-load-grid-cells = !(grid, data-loader) ->
-  if data-loader.has-more-data!
-    add-grid-rows grid, data-loader.load-data! 
-    scroll-loader-counter--
+    console.log "scoll load-grid-cells at last-row-index: #{grid.last-row-index}"
+    if data-loader.has-more-data!
+      add-grid-rows grid, data-loader.load-data! 
 
 periodical-load-grid-cells = !(grid, data-loader) ->
   timer = set-interval (->
