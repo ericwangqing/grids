@@ -42,7 +42,7 @@ add-same-listener-to-multiple-cell-events = !(element, events, listener) ->
     add-listener-to-cell-event element, event, listener
 
 animate-cell-then-show-mask = !(tapped-cell, animation, mask) ->
-  # mask.grid.parent.scrolling-enabled = false
+  mask.grid.parent.scrolling-enabled = false
   wrapper = tapped-cell.wrapper 
   switch mask.yoyo-type 
   case 'Calling Mask'

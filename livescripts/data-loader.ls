@@ -17,7 +17,7 @@ data-loader = (->
 
 
 function load-contacts
-  contacts-amount = if config.DEBUG then 6 else 600
+  contacts-amount = if config.DEBUG then 6 else 100
   contacts = [{avatar: (get-avatar-url i), name: i} for i in [1 to contacts-amount]]
 
 function get-avatar-url index

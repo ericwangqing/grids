@@ -75,22 +75,28 @@ convert-show-method-of-mask = !(mask) ->
   old-show = mask.show
   mask.show = (cell, cell-left, cell-top, aminator) ->
     if !mask.visible
-      mask.grid.remove cell
-      mask.add cell
+      move-cell-upon-mask mask, cell
       show-buttons-in-different-places mask, cell-left, cell-top
       old-show.call mask, cell
-      aminator!
+      aminator! # 展示动画
 
 convert-hide-method-of-mask = !(mask) ->
   old-hide = mask.hide
   mask.hide = ->
-    mask.remove mask.cell
-    mask.grid.add mask.cell
+    move-cell-back-to-grid mask, mask.cell
     old-hide.call mask
 
+move-cell-upon-mask = !(mask, cell) ->
+  mask.grid.remove cell
+  mask.add cell
+
+move-cell-back-to-grid = !(mask, cell) ->
+  mask.remove cell
+  mask.grid.add cell
+
 show-buttons-in-different-places = !(mask, left, top) ->
-  cell-offset = (config.cell.size + config.cell.x-spacer) 
-  in-cell-offset = (config.cell.size - config.cell.size  / config.cell.scale-when-touch) / 2
+  cell-offset = (config.cell.size + config.cell.x-spacer) # 调整到button所在cell
+  in-cell-offset = (config.cell.size - config.cell.size  / config.cell.scale-when-touch) / 2 # 在所在cell内定位
   set-position mask.buttons.left, top + in-cell-offset, left - cell-offset
   set-position mask.buttons.right, top + in-cell-offset, left + cell-offset + 2 * in-cell-offset
   set-position mask.buttons.up, top - cell-offset, left + in-cell-offset

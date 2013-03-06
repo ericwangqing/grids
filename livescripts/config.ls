@@ -31,8 +31,6 @@ config =
     opacity: 0.9 
     top: 0
     left: 0
-    # width: Ti.UI.FILL
-    # height: Ti.UI.FILL
   mask-label:
     background-color: 'white'
     font: {font-size: 60}

@@ -37,7 +37,6 @@ hide-mask = !(mask, origin-text, origin-background-color) ->
     mask.yoyo-label.set-text origin-text
     mask.set-background-color origin-background-color if origin-background-color
     mask.hide!
-    # mask.parent.hide-vells-of-cells!
 
 customize-for-diffrent-mask = (mask) ->
   switch mask.yoyo-type 
