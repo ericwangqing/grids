@@ -19,13 +19,14 @@ convert-mask-show = !(mask) ->
   old-show = mask.show
   mask.show = !(cell) ->
     mask.cell = cell
-    old-show.call mask
+    old-show.call mask if !mask.visible
 
 add-single-tap-close-mask-handler = !(mask) ->
   origin-background-color = mask.background-color
   origin-text = mask.yoyo-label.text
   mask.add-event-listener 'singletap', (e) ->
-    mask.parent.scrolling-enabled = true
+    e.cancel-bubble = true
+    mask.grid.parent.scrolling-enabled = true
     if mask.visible
       hide-mask mask, origin-text, origin-background-color
     else
@@ -36,7 +37,7 @@ hide-mask = !(mask, origin-text, origin-background-color) ->
     mask.yoyo-label.set-text origin-text
     mask.set-background-color origin-background-color if origin-background-color
     mask.hide!
-    mask.parent.hide-vells-of-cells!
+    # mask.parent.hide-vells-of-cells!
 
 customize-for-diffrent-mask = (mask) ->
   switch mask.yoyo-type 

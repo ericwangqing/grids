@@ -1,19 +1,20 @@
 require! ['util', 'mask', 'cell', 'config']
 
-create-grid = (data-loader) ->
-  grid = Ti.UI.create-scroll-view {
+create-grid-container = (data-loader) ->
+  grid-container = Ti.UI.create-scroll-view config.grid
+  grid = Ti.UI.create-view {
     cells: []
     last-row-index: 0
-    hide-vells-of-cells: !->
-      for cell in @cells
-        cell.vell.visible = false 
-  }  <<< config.grid
+  }
+  grid-container.add grid
+  grid-container.grid = grid
 
   add-grid-rows grid, data-loader.load-data!
-  grid.add-event-listener 'scroll', (e) ->
+  grid-container.add-event-listener 'scroll', (e) ->
     if data-loader.has-more-data!
       add-grid-rows grid, data-loader.load-data!
-  grid
+
+  grid-container
 
 add-grid-rows = !(grid, data) ->
   add-grid-cells = add-grid-cells-factory!
@@ -43,4 +44,4 @@ create-wrapped-cell-with-data = (top, left, data, data-index) ->
     data: cell-data # 将phone-number、missing-calls等数据传到cell-view中使用
   }
 
-module.exports <<< {create-grid}
+module.exports <<< {create-grid-container}

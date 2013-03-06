@@ -5,6 +5,7 @@ create-calling-mask = (mask) ->
   add-listeners mask
   hide-label mask
   convert-show-method-of-mask mask
+  convert-hide-method-of-mask mask
   mask.make-call = !->
     mask.yoyo-label.set-text 'YoYo为您打电话'
 
@@ -72,9 +73,20 @@ hide-label = !(mask) ->
 
 convert-show-method-of-mask = !(mask) ->
   old-show = mask.show
-  mask.show = (cell, cell-left, cell-top) ->
-    show-buttons-in-different-places mask, cell-left, cell-top
-    old-show.call mask, cell
+  mask.show = (cell, cell-left, cell-top, aminator) ->
+    if !mask.visible
+      mask.grid.remove cell
+      mask.add cell
+      show-buttons-in-different-places mask, cell-left, cell-top
+      old-show.call mask, cell
+      aminator!
+
+convert-hide-method-of-mask = !(mask) ->
+  old-hide = mask.hide
+  mask.hide = ->
+    mask.remove mask.cell
+    mask.grid.add mask.cell
+    old-hide.call mask
 
 show-buttons-in-different-places = !(mask, left, top) ->
   cell-offset = (config.cell.size + config.cell.x-spacer) 

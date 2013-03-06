@@ -10,9 +10,4 @@ create-push-animation = (duration, scale) ->
       autoreverse : false
       }
 
-bring-to-front = !(element) -> # fix titanium的z-index不起作用的问题
-  container = element.parent
-  container.remove element
-  container.add element
-
-module.exports = {dToP, create-push-animation, bring-to-front}
+module.exports = {dToP, create-push-animation} 

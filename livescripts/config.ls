@@ -3,7 +3,7 @@ require! 'util'
 config =
   # DEBUG: true
   data-loader:
-    amount-of-a-load: 6
+    amount-of-a-load: 12
   main-window:
     yoyo-type: "main-window"
     background-color: 'black'
@@ -23,14 +23,13 @@ config =
     animation-duration: 30
     x-spacer: util.dToP 7.5
     y-spacer: util.dToP 7.5 
-  vell:
+  mask:
     background-color: 'black'
     opacity: 0.9
-  mask:
     top: 0
     left: 0
-    width: Ti.UI.FILL
-    height: Ti.UI.FILL
+    # width: Ti.UI.FILL
+    # height: Ti.UI.FILL
   mask-label:
     background-color: 'white'
     font: {font-size: 60}
