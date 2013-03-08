@@ -18,7 +18,7 @@ data-loader = (->
 
 
 function load-contacts
-  contacts-amount = if config.DEBUG then 25 else 100
+  contacts-amount = if config.DEBUG then config.DEBUG.contacts-amount else config.yoyo.contacts-amount
   contacts = [random-generate-contact i for i in [1 to contacts-amount]]
 
 function random-generate-contact index
@@ -32,7 +32,9 @@ function get-avatar-url
   if config.DEBUG
     '/images/default_avatar_0.png' 
   else
-    '/images/' + (random 12) + '.png' 
+    # '/images/1x1-pixel.png' 
+    '/images/' + (random 12) + '.jpg' 
+    # '/images/' + 1 + '.jpg' 
 
 function random n
   Math.ceil n * Math.random!

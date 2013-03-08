@@ -3,16 +3,21 @@ require! 'util'
 p$ = util.dip-to-pixel
 
 config =
-  # DEBUG: true
+  yoyo:
+    contacts-amount: 200
+  # DEBUG:
+  #   contacts-amount: 6
   data-loader:
-    amount-of-a-load: 12
+    amount-of-a-load: 24
     # minimal-rows-when-scolling: 24
-    # interval-to-load: 10 # 用户无操作就load data
-    max-waiting-scroll-loader: 1
+    interval-to-load: 2000 # 用户2s无操作就load data
+    auto-load-up-limit: 100 # 最多自动load 100个
+    periodical-load: false
+    scroll-to-load-ratio: 0.2 # 触发data-loader的几率，以免触发过多loader，降低responsiveness。
   main-window:
     yoyo-type: "main-window"
     background-color: 'black'
-    nav-bar-hidden: false
+    # nav-bar-hidden: true
     title: 'YoYo通讯录'
   grid:
     yoyo-type: 'contacts-grid'
@@ -34,7 +39,6 @@ config =
     top: 0
     left: 0
   mask-label:
-    background-color: 'white'
     font: {font-size: 60}
     text-align: Ti.UI.TEXT_ALIGNMENT_CENTER
     width: 'auto'
@@ -44,9 +48,14 @@ config =
     move-threshold: 10
     button-cell-size-ratio: 0.5
   info-bar:
-    background-image: '/images/contact_name_background.png'
+    # background-image: '/images/contact_name_background.png'
+    background-gradient:
+      type: 'linear'
+      colors:['transparent', 'black']
+      start-point: {x: '50%', y: '0%'}
+      end-point: {x: '50%', y: '100%'}
     width: p$ 118
-    height: p$ 118
+    height: p$ 18
     left: 0
     bottom: 0
   info-bar-username-label:
@@ -55,7 +64,7 @@ config =
     bottom: 0
     left: p$ 5
   info-bar-signs:
-    width: p$ 54
+    width: p$ 54 
     height: p$ 18
     bottom: 0
     right: p$ 5

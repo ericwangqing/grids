@@ -46,17 +46,25 @@ create-wrapped-cell-with-data = (top, left, data, data-index) ->
   }
 
 add-grid-cells-loader = !(grid-container, grid, data-loader) ->
-  # periodical-load-grid-cells grid, data-loader
-  grid-container.add-event-listener 'scroll', (e) ->
-    console.log "scoll load-grid-cells at last-row-index: #{grid.last-row-index}"
-    if data-loader.has-more-data!
-      add-grid-rows grid, data-loader.load-data! 
+  periodical-load-grid-cells grid, data-loader if config.data-loader.periodical-load
+  previous-y = 0
+  scroll-handler = !(e) ->
+    if data-loader.has-more-data! 
+      add-grid-rows grid, data-loader.load-data! if is-scroll-down pre = previous-y, previous-y := e.y and is-random-to-load!
+    else
+      grid-container.remove-event-listener 'scroll', scroll-handler
+  grid-container.add-event-listener 'scroll', scroll-handler
+
+is-scroll-down = (previous-y, current-y) ->
+  current-y > previous-y 
+
+is-random-to-load = ->
+  Math.random! < config.data-loader.scroll-to-load-ratio
 
 periodical-load-grid-cells = !(grid, data-loader) ->
-  timer = set-interval (->
-    if data-loader.has-more-data!
+  timer = set-interval (!->
+    if data-loader.has-more-data! and grid.last-row-index * config.grid.cells-in-a-row < config.data-loader.auto-load-up-limit
       add-grid-rows grid, data-loader.load-data!
-      # console.log "periodical-load-grid-cells at last-row-index: #{grid.last-row-index}"
     else
       clear-interval timer
     ), config.data-loader.interval-to-load 
