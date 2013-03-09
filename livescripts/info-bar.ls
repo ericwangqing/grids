@@ -1,4 +1,4 @@
-require! ['config']
+require! ['config', 'util']
 
 create-info-bar = (data) ->
   bar = create-bar!
@@ -29,7 +29,10 @@ create-info-signs = (data) ->
 
 create-sign = (sign-name, amount, right) ->
   # TODO: amount 目前尚未考虑
-  Ti.UI.create-image-view {image: (get-sign-icon-path sign-name), right: right} <<< config.info-bar-icon
+  Ti.UI.create-image-view {
+    image: util.get-cached-image-blob get-sign-icon-path sign-name
+    right: right
+    } <<< config.info-bar-icon
 
 get-sign-icon-path = (sign-name) ->
   '/images/' + sign-name + '.png' 

@@ -1,10 +1,9 @@
-require! ['config', 'info-bar']
+require! ['config', 'info-bar', 'util']
 
 create-cell = (params) ->
   wrapper-config = get-wrapper-config params
   cell-config = get-cell-config params
-  image-config =  cell-config{height, width, image}
-    
+  image-config = {image: util.get-cached-image-blob cell-config.image} <<< cell-config{height, width}
   cell = Ti.UI.create-view cell-config 
   cell.image-view = Ti.UI.create-image-view image-config
   cell.add cell.image-view

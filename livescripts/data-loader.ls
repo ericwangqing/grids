@@ -10,7 +10,7 @@ data-loader = (->
     load-data: ->
       end = Math.min contacts.length, cursor + config.data-loader.amount-of-a-load
       console.log "load-data from #{cursor} to #{end}"
-      end = 1.5 * config.data-loader.amount-of-a-load if cursor is 0 # 第一次load多些，铺满屏幕
+      end = 2 * config.data-loader.amount-of-a-load if cursor is 0 # 第一次load多些，铺满屏幕
       result = contacts[cursor to end - 1]
       cursor := end
       result 

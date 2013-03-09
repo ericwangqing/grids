@@ -8,11 +8,11 @@ config =
   # DEBUG:
   #   contacts-amount: 6
   data-loader:
-    amount-of-a-load: 24
+    amount-of-a-load: 15
     # minimal-rows-when-scolling: 24
     interval-to-load: 2000 # 用户2s无操作就load data
     auto-load-up-limit: 100 # 最多自动load 100个
-    periodical-load: false
+    periodical-load: true
     scroll-to-load-ratio: 0.2 # 触发data-loader的几率，以免触发过多loader，降低responsiveness。
   main-window:
     yoyo-type: "main-window"

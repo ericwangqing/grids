@@ -10,4 +10,12 @@ create-push-animation = (duration, scale) ->
       autoreverse : false
       }
 
-module.exports = {dip-to-pixel, create-push-animation} 
+get-cached-image-blob = (->
+  cache = {}
+  (image-name) ->
+    cache[image-name] = (Ti.Filesystem.get-file Ti.Filesystem.resources-directory, image-name).read! if !cache[image-name]
+    cache[image-name]
+  )()
+
+
+module.exports = {dip-to-pixel, create-push-animation, get-cached-image-blob} 
