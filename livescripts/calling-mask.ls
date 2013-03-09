@@ -1,4 +1,4 @@
-require! ['util', 'config']
+require! ['config', 'util']
 
 create-calling-mask = (mask) ->
   add-buttons mask
@@ -36,7 +36,7 @@ create-button-icon = (button-name) ->
   icon-size = config.cell.size * config.calling-mask.button-cell-size-ratio
   center-offset = config.cell.size / config.cell.scale-when-touch / 2
   Ti.UI.create-image-view {
-    image: select-phone-or-message-icon button-name 
+    image: util.get-cached-image-blob select-phone-or-message-icon button-name 
     width: icon-size
     height: icon-size
     center: 

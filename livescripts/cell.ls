@@ -11,19 +11,23 @@ create-cell = (params) ->
   cell.add bar
   warpper-cell-to-keep-rect-x-at-runtime cell, wrapper-config
 
-get-wrapper-config = (params) ->
+get-wrapper-config = do ->
   wrapper-config = {
     height: config.cell.size
     width: config.cell.size
-  } <<< params{left, top}
+  }
+  (params) ->
+    wrapper-config <<< params{left, top}
 
-get-cell-config = (params) ->
+get-cell-config = do ->
   cell-config = {
     yoyo-type: config.cell.yoyo-type
     height: config.cell.size
     width: config.cell.size
     border-radius: config.cell.radius 
-  } <<< params <<< {left: 0, top: 0}
+  } 
+  (params) ->
+    cell-config <<< params{image, cell-index, data}
 
 warpper-cell-to-keep-rect-x-at-runtime = (cell, wrapper-config) -> # 当cell圆角时（有borderRadius），取不到它的rect.x
   wrapper-cell = Ti.UI.create-view wrapper-config

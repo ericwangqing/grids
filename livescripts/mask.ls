@@ -9,7 +9,7 @@ create-mask = (params) ->
   customize-for-diffrent-mask mask
   add-single-tap-close-mask-handler mask
   mask
-
+ 
 add-text-label = !(mask) ->
   label = Ti.UI.create-label config.mask-label <<< {text: mask.yoyo-type}
   mask.yoyo-label = label
@@ -24,7 +24,7 @@ convert-mask-show = !(mask) ->
 add-single-tap-close-mask-handler = !(mask) ->
   origin-background-color = mask.background-color
   origin-text = mask.yoyo-label.text
-  mask.add-event-listener 'singletap', (e) ->
+  mask.add-event-listener 'singletap', (e) -> 
     e.cancel-bubble = true
     mask.grid.parent.scrolling-enabled = true
     if mask.visible
