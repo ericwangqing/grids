@@ -5,8 +5,9 @@ p$ = util.dip-to-pixel
 config =
   yoyo:
     contacts-amount: 50
-  # DEBUG:
-  #   contacts-amount: 6
+  DEBUG:
+    contacts-amount: 6
+    fake-phone-number: 1111
   data-loader:
     amount-of-a-load: 15
     # minimal-rows-when-scolling: 24

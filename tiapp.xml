@@ -34,7 +34,11 @@
 			<orientation>Ti.UI.LANDSCAPE_RIGHT</orientation>
 		</orientations>
 	</iphone>
-	<android xmlns:android="http://schemas.android.com/apk/res/android"/>
+	<android xmlns:android="http://schemas.android.com/apk/res/android">
+		<manifest>
+			<uses-permission android:name="android.permission.CALL_PHONE" />
+		</manifest>
+	</android>
 	<mobileweb>
 		<precache/>
 		<splash>

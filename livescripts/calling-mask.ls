@@ -2,22 +2,34 @@ require! ['config', 'util']
 
 create-calling-mask = (mask) ->
   add-buttons mask
-  add-listeners mask
+  add-mask-swipt-listeners mask
   hide-label mask
   convert-show-method-of-mask mask
   convert-hide-method-of-mask mask
   mask.make-call = !->
     mask.yoyo-label.set-text 'YoYo为您打电话'
+    # Ti.Platform.openURL 'tel:' + mask.cell-wrapper.cell.data.phone-number
+    intent = Ti.Android.create-intent {
+      action: Ti.Android.ACTION_CALL
+      data: 'tel:' + mask.cell-wrapper.cell.data.phone-number
+
+    }
+    Ti.Android.currentActivity.startActivity intent
+
+    console.log "[yoyo] Call => #{mask.cell-wrapper.cell.data.phone-number}"
+    mask.fire-event 'singletap'
 
   mask.send-message = !->
     mask.yoyo-label.set-text 'YoYo为您发短信'
-
+    Ti.Platform.openURL 'sms:' + mask.cell-wrapper.cell.data.phone-number
+    console.log "[yoyo] Call => #{mask.cell-wrapper.cell.data.phone-number}"
+    mask.fire-event 'singletap'
   mask
 
 add-buttons = !(mask) ->
   mask.buttons = {}
   for button-name in ['left', 'right', 'up', 'down']
-    mask.buttons[button-name] = button = create-button! 
+    mask.buttons[button-name] = button = create-button button-name
     icon = create-button-icon button-name
     button.add icon
     add-button-listeners button, mask
@@ -44,10 +56,7 @@ create-button-icon = (button-name) ->
       y: center-offset
   }
 
-add-listeners = !(mask) ->
-  add-swipt-listeners mask
-
-add-swipt-listeners = !(mask) ->
+add-mask-swipt-listeners = !(mask) ->
   mask.add-event-listener 'touchstart', (e) ->
     mask.origin-x = e.x
     mask.origin-y = e.y
@@ -83,7 +92,7 @@ convert-show-method-of-mask = !(mask) ->
 convert-hide-method-of-mask = !(mask) ->
   old-hide = mask.hide
   mask.hide = ->
-    move-cell-back-to-grid mask, mask.cell
+    move-cell-back-to-grid mask, mask.cell-wrapper
     old-hide.call mask
 
 move-cell-upon-mask = !(mask, cell) ->

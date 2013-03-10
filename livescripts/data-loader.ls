@@ -24,6 +24,7 @@ function load-contacts
 function random-generate-contact index
   avatar: get-avatar-url!
   name: ['张三', '李四', '令狐冲', 'Alexander Li', '东方不败'][(random 5 - 1)] + index
+  phone-number: config.DEBUG.fake-phone-number
   missed-calls: (random 10) < 6
   new-messages: (random 10) < 9
   new-sn-updates: (random 100) < 5 
