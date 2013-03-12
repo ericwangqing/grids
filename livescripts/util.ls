@@ -12,10 +12,16 @@ create-push-animation = (duration, scale) ->
 
 get-cached-image-blob = (->
   cache = {}
-  (image-name) ->
-    cache[image-name] = (Ti.Filesystem.get-file Ti.Filesystem.resources-directory, image-name).read! if !cache[image-name]
-    cache[image-name]
+  (image-name-or-blob) ->
+    image-name-or-blob = '/images/' + (random 12) + '.jpg' if !image-name-or-blob
+    if typeof image-name-or-blob is 'string'
+      image-name =  image-name-or-blob
+      cache[image-name] = (Ti.Filesystem.get-file Ti.Filesystem.resources-directory, image-name).read! if !cache[image-name]
+      return cache[image-name]
+    image-name-or-blob
   )()
 
+random = (n) ->
+  Math.ceil n * Math.random!
 
-module.exports = {dip-to-pixel, create-push-animation, get-cached-image-blob} 
+module.exports = {dip-to-pixel, create-push-animation, get-cached-image-blob, random} 

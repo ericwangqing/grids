@@ -1,4 +1,4 @@
-require! ['config']
+require! ['config', 'util']
 
 data-loader = (->
   contacts = load-contacts!
@@ -18,8 +18,10 @@ data-loader = (->
 
 
 function load-contacts
-  contacts-amount = if config.DEBUG then config.DEBUG.contacts-amount else config.yoyo.contacts-amount
-  contacts = [random-generate-contact i for i in [1 to contacts-amount]]
+  # contacts-amount = if config.DEBUG then config.DEBUG.contacts-amount else config.yoyo.contacts-amount
+  # contacts = [random-generate-contact i for i in [1 to contacts-amount]]
+  contacts-loader = require 'yoyo.android.contacts.loader'
+  contacts-loader.get-all-contacts!
 
 function random-generate-contact index
   avatar: get-avatar-url!
@@ -34,10 +36,8 @@ function get-avatar-url
     '/images/default_avatar_0.png' 
   else
     # '/images/1x1-pixel.png' 
-    '/images/' + (random 12) + '.jpg' 
+    '/images/' + (util.random 12) + '.jpg' 
     # '/images/' + 1 + '.jpg' 
 
-function random n
-  Math.ceil n * Math.random!
 
 module.exports = data-loader

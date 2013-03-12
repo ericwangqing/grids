@@ -8,22 +8,30 @@ create-calling-mask = (mask) ->
   convert-hide-method-of-mask mask
   mask.make-call = !->
     mask.yoyo-label.set-text 'YoYo为您打电话'
-    # Ti.Platform.openURL 'tel:' + mask.cell-wrapper.cell.data.phone-number
+    # Ti.Platform.openURL 'tel:' + mask.get-phone-number!
     intent = Ti.Android.create-intent {
       action: Ti.Android.ACTION_CALL
-      data: 'tel:' + mask.cell-wrapper.cell.data.phone-number
+      data: 'tel:' + mask.get-phone-number!
 
     }
     Ti.Android.currentActivity.startActivity intent
 
-    console.log "[yoyo] Call => #{mask.cell-wrapper.cell.data.phone-number}"
+    console.log "[yoyo] Call => #{mask.get-phone-number!}"
     mask.fire-event 'singletap'
 
   mask.send-message = !->
     mask.yoyo-label.set-text 'YoYo为您发短信'
-    Ti.Platform.openURL 'sms:' + mask.cell-wrapper.cell.data.phone-number
-    console.log "[yoyo] Call => #{mask.cell-wrapper.cell.data.phone-number}"
+    Ti.Platform.openURL 'sms:' + mask.get-phone-number!
+    console.log "[yoyo] Call => #{mask.get-phone-number!}"
     mask.fire-event 'singletap'
+
+  mask.get-phone-number = ->
+    phones = mask.cell-wrapper.cell.data.phones
+    short-numbers = [phone for phone in phones when phone.length is 5]
+    return short-number[0] if short-numbers.length > 0
+    return mask.cell-wrapper.cell.data.recent-number or phones[0]
+
+
   mask
 
 add-buttons = !(mask) ->
