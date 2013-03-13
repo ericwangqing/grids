@@ -58,7 +58,7 @@ add-grid-cells-loader = !(grid-container, grid, data-loader) ->
 is-scroll-down = (previous-y, current-y) ->
   current-y > previous-y 
 
-is-random-to-load = ->
+is-random-to-load = -> # 避免每个scroll事件都load，否则会降低用户界面的响应
   Math.random! < config.data-loader.scroll-to-load-ratio
 
 periodical-load-grid-cells = !(grid, data-loader) ->
