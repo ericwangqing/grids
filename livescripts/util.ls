@@ -13,12 +13,19 @@ create-push-animation = (duration, scale) ->
 get-cached-image-blob = (->
   cache = {}
   (image-name-or-blob) ->
+    Ti.API.info 'yoyo', "image-name-or-blob: #{image-name-or-blob}"
     image-name-or-blob = '/images/' + (random 12) + '.jpg' if !image-name-or-blob
     if typeof image-name-or-blob is 'string'
       image-name =  image-name-or-blob
-      cache[image-name] = (Ti.Filesystem.get-file Ti.Filesystem.resources-directory, image-name).read! if !cache[image-name]
-      return cache[image-name]
-    image-name-or-blob
+      Ti.API.info "image-name: " + image-name
+      if (image-name.substring 0, 3) isnt 'sys'
+        file = Ti.Filesystem.get-file Ti.Filesystem.resources-directory, image-name
+      else
+        file = Ti.Filesystem.get-file Ti.Filesystem.application-data-directory, image-name
+      cache[image-name] = file.read! if !cache[image-name]
+      cache[image-name]
+    else
+      image-name-or-blob 
   )()
 
 random = (n) ->

@@ -40,7 +40,7 @@ create-wrapped-cell-with-data = (top, left, data, data-index) ->
   cell.create-cell {
     top: top
     left: left
-    image: cell-data.avatar
+    image: cell-data.avatar-blob or cell-data.avatar
     cell-index: data-index
     data: cell-data # 将phone-number、missed-calls等数据传到cell-view中使用
   }

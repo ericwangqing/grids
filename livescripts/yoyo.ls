@@ -9,7 +9,7 @@ create-main-window = ->
   win = Ti.UI.create-window config.main-window 
 
 create-yoyo-grid-and-masks = ->
-  yoyo-grid-container = grid.create-grid-container data-loader
+  yoyo-grid-container = grid.create-grid-container data-loader.get-loader!
   add-masks yoyo-grid-container
   yoyo-grid-container
 
